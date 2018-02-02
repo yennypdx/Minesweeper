@@ -1,0 +1,5 @@
+﻿  stdafx.cpp
+  GameConsole.cpp
+c:\repos\mslib\mslib\minesweeper.h(395): warning C4018: '<': signed/unsigned mismatch
+c:\repos\mslib\mslib\minesweeper.h(396): warning C4018: '<': signed/unsigned mismatch
+  GameConsole.vcxproj -> C:\Repos\MSLib\Debug\GameConsole.exe
