@@ -148,7 +148,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Array.h" />
-    <ClInclude Include="Array2D.h" />
+    <ClInclude Include="Array2DP.h" />
     <ClInclude Include="Cell.h" />
     <ClInclude Include="Exception.h" />
     <ClInclude Include="Minesweeper.h" />

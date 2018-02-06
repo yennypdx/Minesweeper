@@ -22,6 +22,7 @@ public:
 	Array & operator=(const Array & inRhs);
 	Array & operator<<(const Array & oStream);
 	T & operator[](int inIndex);
+	T & operator[](int inIndex) const;
 public:
 	int getStartIndex();
 	int getStartIndex() const;
@@ -51,10 +52,7 @@ inline Array<T>::Array(int inLength, int inStartIndex)
 	:m_length(inLength), m_startIndex(inStartIndex)
 {
 	if (inLength > 0) {
-		m_array = new T[inLength];
-		for (int i = 0; i < inLength; i++) {
-			m_array[i];
-		}
+		m_array = new T[inLength]();
 	}
 	else {
 		throw Exception("Exception caught: Length must be greater than 0.");
@@ -103,6 +101,23 @@ inline Array<T> & Array<T>::operator<<(const Array<T> & oStream)
 
 template<typename T>
 inline T & Array<T>::operator [] (int inIndex)
+{
+	int updatedInIndex = inIndex;
+
+	if (updatedInIndex < m_startIndex) {
+		throw Exception("Exception caught: Index specified is smaller than the lower bound.");
+	}
+	else if (updatedInIndex > m_length - 1) {
+		throw Exception("Exception caught: Index specified is larger than the upper bound.");
+	}
+	else if (updatedInIndex <= m_length - 1 && updatedInIndex >= m_startIndex) {
+		updatedInIndex = inIndex - m_startIndex;
+	}
+	return m_array[updatedInIndex];
+}
+
+template<typename T>
+inline T & Array<T>::operator [] (int inIndex) const
 {
 	int updatedInIndex = inIndex;
 

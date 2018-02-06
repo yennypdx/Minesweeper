@@ -6,7 +6,7 @@
 #include <time.h>
 #include <string>
 #include <cstdlib>
-#include "Array2D.h"
+#include "Array2DP.h"
 #include "Cell.h"
 
 using namespace std;
@@ -47,29 +47,30 @@ private:
 	int m_minesNum;
 	bool m_validGame;
 	bool m_cheat;
-	Array2D<Cell> m_realBoardLayout;
+	Array2DP<Cell> m_realBoardLayout;
 };
 
 const char COVERED = '?';
 const char FLAGGED = 'P';
 const char MINE = 'X';
 const char BLANK = '0';
-//CHECKED!!
+
 Minesweeper::Minesweeper()
 {
 	m_row = 1;
 	m_column = 1;
 	m_minesNum = 0;
-	m_realBoardLayout = Array2D<Cell>(m_row, m_column);
+	m_realBoardLayout = Array2DP<Cell>();
 	m_validGame = true;
 	m_cheat = false;
 	initGame();
 }
-//CHECKED!!
+
 Minesweeper::Minesweeper(int inRow, int inCol, int minesNum, bool inCheat):
 	m_row(inRow), m_column(inCol), m_minesNum(minesNum), m_cheat(inCheat)
-{
-	m_realBoardLayout = Array2D<Cell>(m_row, m_column);
+{	
+	//using 1 based index
+	m_realBoardLayout = Array2DP<Cell>(m_row, m_column);
 	m_validGame = true;
 	initGame();
 	startGame();
@@ -77,7 +78,7 @@ Minesweeper::Minesweeper(int inRow, int inCol, int minesNum, bool inCheat):
 
 Minesweeper::~Minesweeper()
 {}
-//CHECKED!!
+
 void Minesweeper::startGame()
 {
 	int userRow = 0;
@@ -87,36 +88,37 @@ void Minesweeper::startGame()
 
 	while (m_validGame == true) {
 		cout << "[r]eveal [f]lag [u]nflag [c]heat" << endl;
-		cout << "Operator: ";
+		cout << ":: Operator: ";
 		cin >> userOps;
 		
 		switch (userOps) {
 		case 'r':
-			cout << "Choose ROW number: ";
+			cout << ":: Choose ROW number: ";
 			cin >> userRow;
-			cout << "Choose COLUMN number: ";
+			cout << ":: Choose COLUMN number: ";
 			cin >> userCol;
-			revealCell(userRow - 1, userCol - 1);	//CHECKED!!
+			revealCell(userRow - 1, userCol - 1);
 			break;
 		case 'f':
-			cout << "Choose ROW number: ";
+			cout << ":: Choose ROW number: ";
 			cin >> userRow;
-			cout << "Choose COLUMN number: ";
+			cout << ":: Choose COLUMN number: ";
 			cin >> userCol;
-			flagCell(userRow - 1, userCol - 1);	//CHECKED!!
+			flagCell(userRow - 1, userCol - 1);
 			break;
 		case 'u':
-			cout << "Choose ROW number: ";
+			cout << ":: Choose ROW number: ";
 			cin >> userRow;
-			cout << "Choose COLUMN number: ";
+			cout << ":: Choose COLUMN number: ";
 			cin >> userCol;
-			unFlagCell(userRow - 1, userCol - 1);	//CHECKED!!
+			unFlagCell(userRow - 1, userCol - 1);
 			break;
 		case 'c':
-			cout << "Are you sure [y/n]? ";
+			cout << ":: Are you sure [y/n]? ";
 			cin >> ansCheat;
 			if (ansCheat == 'y') {
 				m_cheat = true;
+				m_validGame = false;
 			}
 			break;
 		}
@@ -126,30 +128,32 @@ void Minesweeper::startGame()
 		cout << endl;
 	}
 }
-//CHECKED!!
+
 void Minesweeper::initGame()
 {
 	addMines();
-	setCellNumbers();
 	displayProgress();
+	setCellNumbers();
 }
-//CHECKED!!
+
 void Minesweeper::addMines()
 {
+	//using 0 based indexes for Setting Mine Cells
 	srand((unsigned)time(NULL));
 	for (int i = 0; i < m_minesNum; i++) {
 		bool placed = false;
 		while (placed == false) {
 			int x = rand() % m_row;
 			int y = rand() % m_column;
-			if (m_realBoardLayout[x][y].getMineCell() == false) {
+			if (m_realBoardLayout[x][y].getMineCell() == false) 
+			{
 				m_realBoardLayout[x][y].setMineCell(true);
 				placed = true;
 			}
 		}
 	}
 }
-//CHECKED!!
+
 int Minesweeper::countSuroundingMines(int inRow, int inCol)
 {
 	int mine_count = 0;
@@ -193,7 +197,7 @@ int Minesweeper::countFlaggedMines()
 	}
 	return numFlagged;
 }
-//CHECKED!!!
+
 void Minesweeper::revealCell(int inRow, int inCol)
 {
 	if (isValidCoord(inRow, inCol)) {
@@ -220,7 +224,7 @@ void Minesweeper::revealCell(int inRow, int inCol)
 		cout << "Input is out of range. Try again." << endl;
 	}
 }
-//CHECKED!!!
+
 void Minesweeper::flagCell(int inRow, int inCol)
 {
 	if (isValidCoord(inRow, inCol)) {
@@ -235,7 +239,7 @@ void Minesweeper::flagCell(int inRow, int inCol)
 		cout << "Input is out of range. Try again." << endl;
 	}
 }
-//CHECKED!!!
+
 void Minesweeper::unFlagCell(int inRow, int inCol)
 {
 	if (isValidCoord(inRow, inCol)) {
@@ -250,11 +254,11 @@ void Minesweeper::unFlagCell(int inRow, int inCol)
 		cout << "Input is out of range. Try again." << endl;
 	}
 }
-//CHECKED!!!
+
 void Minesweeper::displayProgress()
 {
 	if (m_cheat == true) {
-		cout << endl << "[Showing All Mines Location]" << endl;
+		cout << endl << "[Showing Answer Board Layout]" << endl;
 	}
 	//display column numbering
 	cout << "    ";
@@ -306,21 +310,25 @@ void Minesweeper::displayProgress()
 		cout << endl;
 	}
 	cout << endl;
+	if (m_cheat == true) {
+		cout << "Too bad you cheat!" << endl;
+	}
 }
-//PROBLEMATIC, process never goes into the if statement
+
 void Minesweeper::setCellNumbers()
 {
-	//getting num of mines around the non-Mine cells
-	for (int c = 0; c < m_column - 1; c++) {
-		for (int r = 0; r < m_row - 1; r++) {
+	//getting num of mines around the non-Mine (empty) cells
+	for (int c = 0; c < m_column; c++) {
+		for (int r = 0; r < m_row; r++) {
 			if (m_realBoardLayout[r][c].getMineCell() == false) 
 			{
-				m_realBoardLayout[r][c].setNumberCell(countSuroundingMines(r, c));
+				int numMines = countSuroundingMines(r, c);
+				m_realBoardLayout[r][c].setNumberCell(numMines);
 			}
 		}
 	}
 }
-//CHECKED!!!!
+
 bool Minesweeper::isValidCoord(int inRow, int inCol)
 {
 	bool coordValidation = true;
@@ -333,7 +341,7 @@ bool Minesweeper::isValidCoord(int inRow, int inCol)
 	}
 	return coordValidation;
 }
-//CHECKED!!!!
+
 bool Minesweeper::isMine(int inRow, int inCol)
 {
 	bool isMine = false;
@@ -344,7 +352,7 @@ bool Minesweeper::isMine(int inRow, int inCol)
 	}
 	return isMine;
 }
-//CHECKED!!!!
+
 bool Minesweeper::isFlagged(int inRow, int inCol)
 {
 	bool isFlagged = false;
@@ -355,7 +363,7 @@ bool Minesweeper::isFlagged(int inRow, int inCol)
 	}
 	return isFlagged;
 }
-//CHECKED!!!!
+
 bool Minesweeper::isCovered(int inRow, int inCol)
 {
 	bool isCovered = false;
@@ -366,7 +374,7 @@ bool Minesweeper::isCovered(int inRow, int inCol)
 	}
 	return isCovered;
 }
-//CHECKED!!!!
+
 void Minesweeper::uncoverCell(int inRow, int inCol)
 {
 	if (isValidCoord(inRow, inCol)) {
@@ -375,25 +383,25 @@ void Minesweeper::uncoverCell(int inRow, int inCol)
 		}
 	}
 }
-//CHECKED!!
+
 void Minesweeper::checkGameStatus()
 {
 	if (checkWin()) {
 		cout << "Congratulations, YOU WIN!!!" << endl;
 	}
 	else if (m_validGame == false) {
-		cout << "You found a Mine, you lose!" << endl << endl;
+		cout << "Sorry, YOU LOST!" << endl << endl;
 	}
 }
-//CHECKED!!
+
 bool Minesweeper::checkWin()
 {
 	bool win = false;
 	if (m_validGame == true) {
 		if (countFlaggedMines() == m_minesNum) {
 			int numBadFlags = 0;
-			for (size_t row = 0; row < m_row - 1; row++) {
-				for (size_t col = 0; col < m_column - 1; col++) {
+			for (int row = 0; row < m_row - 1; row++) {
+				for (int col = 0; col < m_column - 1; col++) {
 					if (isFlagged(row, col) && (isMine(row, col) == false)) {
 						numBadFlags++;
 					}

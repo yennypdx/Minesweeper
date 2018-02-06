@@ -1,3 +1,3 @@
 ﻿  stdafx.cpp
   GameConsole.cpp
-LINK : fatal error LNK1104: cannot open file 'Array2D.lib'
+  GameConsole.vcxproj -> C:\Repos\Minesweeper\x64\Debug\GameConsole.exe

@@ -40,10 +40,10 @@ Cell::~Cell()
 
 Cell & Cell::operator=(Cell & inRhs) {
 	if (this != &inRhs) {
-		m_minecell = inRhs.m_minecell;
-		m_flaggedcell = inRhs.m_flaggedcell;
-		m_coveredcell = inRhs.m_coveredcell;
-		m_numbercell = inRhs.m_numbercell;
+		m_minecell = inRhs.getMineCell();
+		m_flaggedcell = inRhs.getFlaggedCell();
+		m_coveredcell = inRhs.getCoveredCell();
+		m_numbercell = inRhs.getNumberCell();
 	}
 	return *this;
 }
